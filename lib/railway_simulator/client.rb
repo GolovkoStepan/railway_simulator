@@ -3,14 +3,13 @@
 require 'tty-prompt'
 
 # rubocop:disable Metrics/AbcSize
-# rubocop:disable Layout/LineLength
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 
 # Railway simulator console client
 module RailwaySimulator
   # Console client with interface
-  class ConsoleClient
+  class Client
     attr_accessor :stations
     attr_accessor :trains
     attr_accessor :routes
@@ -66,7 +65,8 @@ module RailwaySimulator
         puts 'Номер поезда не может быть пустым'
         retry
       rescue Common::TrainErrors::NumberWrongFormat
-        puts 'Неверный формат номера. Допустимые форматы: 23232, F3D-1D, DAG2F, 22-432 и т.д.'
+        puts 'Неверный формат номера.' \
+             ' Допустимые форматы: 23232, F3D-1D, DAG2F, 22-432 и т.д.'
         retry
       end
 
@@ -82,9 +82,13 @@ module RailwaySimulator
       @exit_flag = true
       while @exit_flag
         @prompt.select('Выберите действие') do |menu|
-          menu.choice 'Создать новый маршрут',      -> { create_new_route }, ({ disabled: '(станции не созданы)' } if @stations.empty?)
-          menu.choice 'Добавить станции в маршрут', -> { add_way_stations_to_route }, ({ disabled: '(маршруты не созданы)' } if @routes.empty?)
-          menu.choice 'Назад',                      -> { @exit_flag = false }
+          menu.choice 'Создать новый маршрут',
+                      -> { create_new_route },
+                      ({ disabled: '(станции не созданы)' } if @stations.empty?)
+          menu.choice 'Добавить станции в маршрут',
+                      -> { add_way_stations_to_route },
+                      ({ disabled: '(маршруты не созданы)' } if @routes.empty?)
+          menu.choice 'Назад', -> { @exit_flag = false }
         end
       end
 
@@ -102,14 +106,28 @@ module RailwaySimulator
 
       @exit_flag = true
       while @exit_flag
+        route     = train.route_present?
+        carriages = train.carriages_present?
+
         @prompt.select('Выберите действие') do |menu|
-          menu.choice 'Назначить маршрут',      -> { assign_route_to train: train }, ({ disabled: '(маршруты не созданы)' } if @routes.empty?)
-          menu.choice 'Начать движение вперед', -> { move_ahead train: train }, ({ disabled: '(маршрут не назначен)' } unless train.route_present?)
-          menu.choice 'Начать движение назад',  -> { move_back train: train }, ({ disabled: '(маршрут не назначен)' } unless train.route_present?)
-          menu.choice 'Добавить вагон',         -> { add_carriage(train: train) }
-          menu.choice 'Удалить вагон',          -> { remove_carriage(train: train) }, ({ disabled: '(вагонов нет)' } unless train.carriages_present?)
-          menu.choice 'Управление вагонами',    -> { carriages_processing(train: train) }, ({ disabled: '(вагонов нет)' } unless train.carriages_present?)
-          menu.choice 'Назад',                  -> { @exit_flag = false }
+          menu.choice 'Назначить маршрут',
+                      -> { assign_route_to train: train },
+                      ({ disabled: '(маршруты не созданы)' } if @routes.empty?)
+          menu.choice 'Начать движение вперед',
+                      -> { move_ahead train: train },
+                      ({ disabled: '(маршрут не назначен)' } unless route)
+          menu.choice 'Начать движение назад',
+                      -> { move_back train: train },
+                      ({ disabled: '(маршрут не назначен)' } unless route)
+          menu.choice 'Добавить вагон',
+                      -> { add_carriage(train: train) }
+          menu.choice 'Удалить вагон',
+                      -> { remove_carriage(train: train) },
+                      ({ disabled: '(вагонов нет)' } unless carriages)
+          menu.choice 'Управление вагонами',
+                      -> { carriages_processing(train: train) },
+                      ({ disabled: '(вагонов нет)' } unless carriages)
+          menu.choice 'Назад', -> { @exit_flag = false }
         end
       end
 
@@ -127,10 +145,18 @@ module RailwaySimulator
 
       @exit_flag = true
       while @exit_flag
+        passenger_train = train.is_a? PassengerTrain
+        freight_train   = train.is_a? FreightTrain
+        hint            = '(недоступен для данного типа вагона)'
+
         @prompt.select('Выберите действие') do |menu|
-          menu.choice 'Занять место', -> { take_place(carriage: carriage) }, ({ disabled: '(недоступен для данного типа вагона)' } unless train.is_a? PassengerTrain)
-          menu.choice 'Занять объем', -> { take_volume(carriage: carriage) }, ({ disabled: '(недоступен для данного типа вагона)' } unless train.is_a? FreightTrain)
-          menu.choice 'Назад',        -> { @exit_flag = false }
+          menu.choice 'Занять место',
+                      -> { take_place(carriage: carriage) },
+                      ({ disabled: hint } unless passenger_train)
+          menu.choice 'Занять объем',
+                      -> { take_volume(carriage: carriage) },
+                      ({ disabled: hint } unless freight_train)
+          menu.choice 'Назад', -> { @exit_flag = false }
         end
       end
     end
@@ -160,13 +186,14 @@ module RailwaySimulator
     end
 
     def add_carriage(train:)
+      hint = '(недоступен для данного типа поезда)'
       choices = [
         { name: 'Пассажирский', value: PassengerCarriage },
         { name: 'Грузовой',     value: CargoCarriage },
         { name: 'Назад',        value: nil }
       ]
-      choices[0].merge!(disabled: '(недоступен для данного типа поезда)') unless train.is_a? PassengerTrain
-      choices[1].merge!(disabled: '(недоступен для данного типа поезда)') unless train.is_a? FreightTrain
+      choices[0].merge!(disabled: hint) unless train.is_a? PassengerTrain
+      choices[1].merge!(disabled: hint) unless train.is_a? FreightTrain
       carriage_type = @prompt.select('Выберите тип вагона', choices)
 
       return wait_and_clear wait_for: 0 if carriage_type.nil?
@@ -184,14 +211,19 @@ module RailwaySimulator
         raise StandardError, "Class #{carriage_type} is not supported"
       end
 
-      train.add_carriage(carriage_type.new(name: carriage_name, argument => value))
+      train.add_carriage(
+        carriage_type.new(name: carriage_name, argument => value)
+      )
+
       wait_and_clear msg: "Вагон [#{carriage_name} добавлен]"
     end
 
     def remove_carriage(train:)
-      choices  = train.carriages { |carriage| { name: carriage.name, value: carriage } }
-      carriage = @prompt.select('Выберите вагон для удаления', choices)
+      choices = train.carriages do |carriage|
+        { name: carriage.name, value: carriage }
+      end
 
+      carriage = @prompt.select('Выберите вагон для удаления', choices)
       train.remove_carriage(carriage)
 
       wait_and_clear msg: "Вагон [#{carriage.name} удален]"
@@ -206,7 +238,9 @@ module RailwaySimulator
     end
 
     def move_ahead(train:)
-      return wait_and_clear msg: 'Поезд находится на конечной станции' if train.next_station.nil?
+      if train.next_station.nil?
+        return wait_and_clear msg: 'Поезд находится на конечной станции'
+      end
 
       wait_and_clear msg: "Поезд движется к станции #{train.next_station.name}"
       train.speed_up
@@ -215,9 +249,14 @@ module RailwaySimulator
     end
 
     def move_back(train:)
-      return wait_and_clear msg: 'Поезд находится на начальной станции' if train.previous_station.nil?
+      if train.previous_station.nil?
+        return wait_and_clear msg: 'Поезд находится на начальной станции'
+      end
 
-      wait_and_clear msg: "Поезд движется к станции #{train.previous_station.name}"
+      wait_and_clear(
+        msg: "Поезд движется к станции #{train.previous_station.name}"
+      )
+
       train.speed_up
       train.move_back
       train.brake
@@ -226,11 +265,15 @@ module RailwaySimulator
     def create_new_route
       return wait_and_clear msg: 'Станций нет' if @stations.empty?
 
-      choices       = @stations.map { |s| { name: s.name, value: s } }
+      choices = @stations.map { |s| { name: s.name, value: s } }
       start_station = @prompt.select('Выберите начальную станцию', choices)
-      choices       = (@stations - [start_station]).map { |s| { name: s.name, value: s } }
-      end_station   = @prompt.select('Выберите конечную станцию', choices)
-      route_name    = @prompt.ask('Введите название маршрута')
+
+      choices = (@stations - [start_station]).map do |s|
+        { name: s.name, value: s }
+      end
+
+      end_station = @prompt.select('Выберите конечную станцию', choices)
+      route_name = @prompt.ask('Введите название маршрута')
 
       @routes << Route.new(name: route_name,
                            start_station: start_station,
@@ -242,7 +285,8 @@ module RailwaySimulator
     def add_way_stations_to_route
       choices  = @routes.map { |route| { name: route.name, value: route } }
       route    = @prompt.select('Выберите маршрут', choices)
-      stations = @stations - ([route.start_station, route.end_station] + route.way_stations)
+      stations = [route.start_station, route.end_station] + route.way_stations
+      stations = @stations - stations
       return wait_and_clear msg: 'Все станции уже добавлены' if stations.empty?
 
       choices  = stations.map { |s| { name: s.name, value: s } }
@@ -295,6 +339,5 @@ module RailwaySimulator
 end
 
 # rubocop:enable Metrics/AbcSize
-# rubocop:enable Layout/LineLength
 # rubocop:enable Metrics/ClassLength
 # rubocop:enable Metrics/MethodLength

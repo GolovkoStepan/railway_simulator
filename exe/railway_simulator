@@ -3,4 +3,4 @@
 
 require 'railway_simulator'
 
-RailwaySimulator::ConsoleClient.new.run_main_menu_loop
+RailwaySimulator::Client.new.run_main_menu_loop
