@@ -3,7 +3,10 @@
 # rubocop:disable Metrics/BlockLength
 
 RSpec.describe RailwaySimulator::Train do
-  let(:stations)      { (1..10).map { |i| RailwaySimulator::Station.new("Станция #{i}") } }
+  let(:stations) do
+    (1..10).map { |i| RailwaySimulator::Station.new("Станция #{i}") }
+  end
+
   let(:start_station) { stations.first }
   let(:end_station)   { stations.last }
   let(:way_stations)  { stations[1..-2] }
@@ -73,13 +76,17 @@ RSpec.describe RailwaySimulator::Train do
 
     it 'should speed up' do
       expect { subject.speed_up }
-        .to change(subject, :speed).from(0).to(RailwaySimulator::Train::MAX_SPEED)
+        .to change(subject, :speed)
+        .from(0)
+        .to(RailwaySimulator::Train::MAX_SPEED)
     end
 
     it 'should brake' do
       subject.speed_up
       expect { subject.brake }
-        .to change(subject, :speed).from(RailwaySimulator::Train::MAX_SPEED).to(0)
+        .to change(subject, :speed)
+        .from(RailwaySimulator::Train::MAX_SPEED)
+        .to(0)
     end
 
     it 'should raise ArgumentError if carriage has wrong type' do

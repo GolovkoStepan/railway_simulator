@@ -4,10 +4,8 @@ require_relative 'common/company'
 require_relative 'common/instance_counter'
 require_relative 'common/train_errors'
 
-# rubocop:disable Style/AsciiComments
-
 module RailwaySimulator
-  # Класс "Поезд"
+  # Train class
   class Train
     include Common::TrainErrors
     include Common::Company
@@ -16,14 +14,8 @@ module RailwaySimulator
     NUMBER_FORMAT = /^(\w{3}|\d{3})-?(\w{2}|\d{2})$/.freeze
     MAX_SPEED     = 100
 
-    # Номер поезда
     attr_accessor :number
-    # Может возвращать текущую скорость
-    attr_reader :speed
-    # Текущая станция
-    attr_reader :current_station
-    # Маршрут
-    attr_reader :route
+    attr_reader   :speed, :current_station, :route
 
     class << self
       def find(number = nil)
@@ -39,11 +31,8 @@ module RailwaySimulator
     end
 
     def initialize(number)
-      # Имеет номер (произвольная строка)
-      @number = number
-      # Текущая скорость
-      @speed = 0
-      # Может иметь вагоны
+      @number    = number
+      @speed     = 0
       @carriages = []
 
       validate!
@@ -58,70 +47,56 @@ module RailwaySimulator
       @carriages.map { |carriage| yield(carriage) }
     end
 
-    # Может набирать скорость
     def speed_up
       @speed = MAX_SPEED
     end
 
-    # Может тормозить (сбрасывать скорость до нуля)
     def brake
       @speed = 0
     end
 
-    # Перемещение на одну станцию вперед
     def move_ahead
       move to_station: :next_station
     end
 
-    # Перемещение на одну станцию назад
     def move_back
       move to_station: :previous_station
     end
 
-    # Предыдущая станция
     def previous_station
       find_station(-1)
     end
 
-    # Следующая станция
     def next_station
       find_station(1)
     end
 
-    # Есть маршрут
     def route_present?
       @current_station.is_a? Station
     end
 
-    # Есть вагоны
     def carriages_present?
       @carriages.any?
     end
 
-    # Может прицеплять вагон
     def add_carriage(carriage)
       raise ArgumentError unless carriage.is_a? Carriage
 
       @carriages << carriage if @speed.zero?
     end
 
-    # Может отцеплять вагон
     def remove_carriage(carriage)
       @carriages.delete(carriage) if @speed.zero?
     end
 
-    # Кол-во вагонов
     def carriages_count
       @carriages.count
     end
 
-    # Может принимать маршрут следования (объект класса Route)
     def assign_route(route)
       raise ArgumentError unless route.is_a? Route
 
       @route = route
-      # При назначении маршрута поезду, поезд
-      # автоматически помещается на первую станцию в маршруте.
       @route.start_station.take_train(self)
       @current_station = @route.start_station
     end
@@ -164,5 +139,3 @@ module RailwaySimulator
     end
   end
 end
-
-# rubocop:enable Style/AsciiComments

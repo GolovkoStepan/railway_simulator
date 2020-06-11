@@ -9,18 +9,19 @@ require 'tty-prompt'
 
 # Railway simulator console client
 module RailwaySimulator
+  # Console client with interface
   class ConsoleClient
     attr_accessor :stations
     attr_accessor :trains
     attr_accessor :routes
 
     MAIN_MENU_CONFIGURATION = {
-        'Создать новую станцию' => :create_station,
-        'Создать новый поезд' => :create_train,
-        'Управление маршрутами' => :routes_processing,
-        'Управление поездами' => :trains_processing,
-        'Просмотр информации' => :railway_state_info,
-        'Завершить программу' => :complete_main_menu_loop
+      'Создать новую станцию' => :create_station,
+      'Создать новый поезд' => :create_train,
+      'Управление маршрутами' => :routes_processing,
+      'Управление поездами' => :trains_processing,
+      'Просмотр информации' => :railway_state_info,
+      'Завершить программу' => :complete_main_menu_loop
     }.freeze
 
     def initialize
@@ -91,6 +92,7 @@ module RailwaySimulator
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
 
     def trains_processing
       return wait_and_clear msg: 'Поездов нет' if @trains.empty?
@@ -114,6 +116,7 @@ module RailwaySimulator
       wait_and_clear wait_for: 0
     end
 
+    # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/CyclomaticComplexity
 
     def carriages_processing(train:)
@@ -158,9 +161,9 @@ module RailwaySimulator
 
     def add_carriage(train:)
       choices = [
-          { name: 'Пассажирский', value: PassengerCarriage },
-          { name: 'Грузовой',     value: CargoCarriage },
-          { name: 'Назад',        value: nil }
+        { name: 'Пассажирский', value: PassengerCarriage },
+        { name: 'Грузовой',     value: CargoCarriage },
+        { name: 'Назад',        value: nil }
       ]
       choices[0].merge!(disabled: '(недоступен для данного типа поезда)') unless train.is_a? PassengerTrain
       choices[1].merge!(disabled: '(недоступен для данного типа поезда)') unless train.is_a? FreightTrain
@@ -254,8 +257,8 @@ module RailwaySimulator
       puts '=== Станции и поезда'
       @stations.each do |station|
         formatted_str = [
-            "Станция: [#{station.name}]".ljust(50),
-            "Поезда: #{station.trains(&:number)&.join(', ')}"
+          "Станция: [#{station.name}]".ljust(50),
+          "Поезда: #{station.trains(&:number)&.join(', ')}"
         ].join('')
 
         puts formatted_str
@@ -264,11 +267,11 @@ module RailwaySimulator
       puts "\n=== Поезда"
       @trains.each do |train|
         formatted_str = [
-            "Поезд [#{train.number}]".ljust(25),
-            "Компания - производитель: #{train.company_name}".ljust(40),
-            "Маршрут: #{train.route&.name}".ljust(25),
-            "Текущая станция: #{train.current_station&.name}".ljust(35),
-            "Вагоны: #{train.carriages(&:name)&.join(', ')}"
+          "Поезд [#{train.number}]".ljust(25),
+          "Компания - производитель: #{train.company_name}".ljust(40),
+          "Маршрут: #{train.route&.name}".ljust(25),
+          "Текущая станция: #{train.current_station&.name}".ljust(35),
+          "Вагоны: #{train.carriages(&:name)&.join(', ')}"
         ].join('')
 
         puts formatted_str

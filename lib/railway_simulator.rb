@@ -11,5 +11,6 @@ require 'railway_simulator/station'
 require 'railway_simulator/train'
 require 'railway_simulator/main'
 
+# Railway main module
 module RailwaySimulator
 end

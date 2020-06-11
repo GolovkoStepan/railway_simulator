@@ -26,7 +26,9 @@ RSpec.describe RailwaySimulator::Route do
 
   context 'way stations processing' do
     let(:way_stations) do
-      (1..5).map { |i| RailwaySimulator::Station.new"Промежуточная станция #{i}" }
+      (1..5).map do |i|
+        RailwaySimulator::Station.new "Промежуточная станция #{i}"
+      end
     end
 
     before { way_stations.each { |station| subject.add_way_station station } }

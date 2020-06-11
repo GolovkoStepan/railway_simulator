@@ -2,10 +2,8 @@
 
 require_relative 'carriage'
 
-# rubocop:disable Style/AsciiComments
-
 module RailwaySimulator
-  # Класс "Пассажирский вагон"
+  # Passenger carriage class
   class PassengerCarriage < Carriage
     attr_reader :occupied_places
 
@@ -28,5 +26,3 @@ module RailwaySimulator
     end
   end
 end
-
-# rubocop:enable Style/AsciiComments
