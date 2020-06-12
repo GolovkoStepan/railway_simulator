@@ -2,10 +2,8 @@
 
 require_relative 'common/company'
 
-# rubocop:disable Style/AsciiComments
-
 module RailwaySimulator
-  # Класс "Вагон"
+  # Carriage class
   class Carriage
     include Common::Company
 
@@ -30,5 +28,3 @@ module RailwaySimulator
     end
   end
 end
-
-# rubocop:enable Style/AsciiComments

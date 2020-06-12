@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/AsciiComments
-
 require_relative 'train'
 
 module RailwaySimulator
-  # Класс "Грузовой поезд"
+  # Freight train class
   class FreightTrain < Train
-    # Может прицеплять грузовой вагон
     def add_carriage(carriage)
       raise ArgumentError unless carriage.is_a? CargoCarriage
 
@@ -15,5 +12,3 @@ module RailwaySimulator
     end
   end
 end
-
-# rubocop:enable Style/AsciiComments

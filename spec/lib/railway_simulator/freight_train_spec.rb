@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe RailwaySimulator::FreightTrain do
-  let(:carriage)           { RailwaySimulator::Carriage.new 'Вагон' }
-  let(:passenger_carriage) { RailwaySimulator::PassengerCarriage.new(name: 'Пассажирский вагон') }
+  let(:carriage) { RailwaySimulator::Carriage.new 'Вагон' }
+
+  let(:passenger_carriage) do
+    RailwaySimulator::PassengerCarriage.new(name: 'Пассажирский вагон')
+  end
 
   subject { described_class.new 'GD2-L1' }
 

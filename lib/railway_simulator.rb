@@ -9,7 +9,7 @@ require 'railway_simulator/passenger_train'
 require 'railway_simulator/route'
 require 'railway_simulator/station'
 require 'railway_simulator/train'
-require 'railway_simulator/main'
+require 'railway_simulator/client'
 
-module RailwaySimulator
-end
+# Railway main module
+module RailwaySimulator; end

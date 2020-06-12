@@ -41,11 +41,13 @@ RSpec.describe RailwaySimulator::Station do
     end
 
     it 'should return only passenger trains' do
-      expect(subject.trains(for_type: RailwaySimulator::PassengerTrain)).to eq([passenger_train])
+      expect(subject.trains(for_type: RailwaySimulator::PassengerTrain))
+        .to eq([passenger_train])
     end
 
     it 'should return only passenger trains' do
-      expect(subject.trains(for_type: RailwaySimulator::FreightTrain)).to eq([freight_train])
+      expect(subject.trains(for_type: RailwaySimulator::FreightTrain))
+        .to eq([freight_train])
     end
 
     it 'should send train' do
