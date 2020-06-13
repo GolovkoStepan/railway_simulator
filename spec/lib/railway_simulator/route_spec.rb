@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
-
 RSpec.describe RailwaySimulator::Route do
   let(:name)          { 'Тестовый маршрут' }
   let(:start_station) { RailwaySimulator::Station.new 'Начальная стацния' }
@@ -44,5 +42,3 @@ RSpec.describe RailwaySimulator::Route do
     end
   end
 end
-
-# rubocop:enable Metrics/BlockLength

@@ -1,27 +1,24 @@
 # frozen_string_literal: true
 
 require_relative 'common/instance_counter'
+require_relative 'common/validations'
 
 module RailwaySimulator
   # Station class
   class Station
     include Common::InstanceCounter
+    include Common::Validation
 
     attr_reader :name
+    validate :name, presence: true, type: String
 
     def initialize(name)
       @name   = name
       @trains = []
 
       validate!
-      self.class.send(:add_instance, self)
-    end
 
-    def valid?
-      validate!
-      true
-    rescue ArgumentError
-      false
+      self.class.send(:add_instance, self)
     end
 
     def take_train(train)
@@ -59,12 +56,6 @@ module RailwaySimulator
         @instances ||= []
         @instances << instance
       end
-    end
-
-    protected
-
-    def validate!
-      raise ArgumentError 'Name must be filled' if @name.nil? || @name.empty?
     end
   end
 end

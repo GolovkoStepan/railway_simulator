@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
 require_relative 'carriage'
+require_relative 'common/validations'
 
 module RailwaySimulator
   # Passenger carriage class
   class PassengerCarriage < Carriage
+    include Common::Validation
+
     attr_reader :occupied_places
 
     def initialize(name:, places: 50)
       @total_places    = places.to_i
       @occupied_places = 0
+
       super(name)
     end
 

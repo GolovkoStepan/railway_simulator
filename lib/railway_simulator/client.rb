@@ -2,10 +2,6 @@
 
 require 'tty-prompt'
 
-# rubocop:disable Metrics/AbcSize
-# rubocop:disable Metrics/ClassLength
-# rubocop:disable Metrics/MethodLength
-
 # Railway simulator console client
 module RailwaySimulator
   # Console client with interface
@@ -58,24 +54,21 @@ module RailwaySimulator
 
       return wait_and_clear wait_for: 0 unless train_class[:value]
 
-      begin
+      loop do
         train_name = @prompt.ask('Введите название поезда:')
         train = train_class[:value].new(train_name)
-      rescue Common::TrainErrors::NumberEmpty
-        puts 'Номер поезда не может быть пустым'
-        retry
-      rescue Common::TrainErrors::NumberWrongFormat
-        puts 'Неверный формат номера.' \
-             ' Допустимые форматы: 23232, F3D-1D, DAG2F, 22-432 и т.д.'
-        retry
+
+        company_name = @prompt.ask('Введите название компании:')
+        train.company_name = company_name
+
+        if train.valid?
+          @trains << train
+          wait_and_clear msg: "Поезд [#{train_name}] создан"
+          break
+        end
+
+        puts "Ошибка варидации. #{train.errors.inspect}"
       end
-
-      company_name = @prompt.ask('Введите название компании:')
-      train.company_name = company_name
-
-      @trains << train
-
-      wait_and_clear msg: "Поезд [#{train_name}] создан"
     end
 
     def routes_processing
@@ -94,9 +87,6 @@ module RailwaySimulator
 
       wait_and_clear wait_for: 0
     end
-
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
 
     def trains_processing
       return wait_and_clear msg: 'Поездов нет' if @trains.empty?
@@ -133,9 +123,6 @@ module RailwaySimulator
 
       wait_and_clear wait_for: 0
     end
-
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/CyclomaticComplexity
 
     def carriages_processing(train:)
       choices  = train.carriages { |c| { name: c.name, value: c } }
@@ -337,7 +324,3 @@ module RailwaySimulator
     end
   end
 end
-
-# rubocop:enable Metrics/AbcSize
-# rubocop:enable Metrics/ClassLength
-# rubocop:enable Metrics/MethodLength

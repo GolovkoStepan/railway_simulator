@@ -15,4 +15,15 @@ RSpec.describe RailwaySimulator::Carriage do
       .from(nil)
       .to('Name')
   end
+
+  it 'should validate name field' do
+    subject.name = ''
+
+    expect(subject.valid?).to eq false
+    expect { subject.validate! }
+      .to raise_error(
+        RailwaySimulator::Common::Validation::ValidationCustomError
+      )
+    expect(subject.errors.count).to eq 1
+  end
 end

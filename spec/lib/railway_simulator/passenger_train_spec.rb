@@ -19,4 +19,16 @@ RSpec.describe RailwaySimulator::PassengerTrain do
     expect { subject.add_carriage(cargo_carriage) }
       .to raise_error(ArgumentError)
   end
+
+  it 'should raise NumberEmpty if number is empty' do
+    expect { described_class.new('').validate! }
+      .to raise_error(
+        RailwaySimulator::Common::Validation::ValidationCustomError
+      )
+  end
+
+  it 'should raise ArgumentError if route has wrong type' do
+    expect { subject.assign_route(Object.new) }
+      .to raise_error(ArgumentError)
+  end
 end
