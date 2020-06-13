@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
-
 RSpec.describe RailwaySimulator::Station do
   let(:station_name) { 'Тестовая стацния' }
   subject { described_class.new(station_name) }
@@ -56,5 +54,3 @@ RSpec.describe RailwaySimulator::Station do
     end
   end
 end
-
-# rubocop:enable Metrics/BlockLength

@@ -1,16 +1,24 @@
 # frozen_string_literal: true
 
 require_relative 'common/instance_counter'
+require_relative 'common/accessors'
+require_relative 'common/validations'
+require_relative 'station'
 
 module RailwaySimulator
   # The Route class that implements the route logic.
   class Route
+    extend  Common::Accessors
     include Common::InstanceCounter
+    include Common::Validation
 
     attr_accessor :name
-    attr_accessor :start_station
-    attr_accessor :end_station
-    attr_reader   :way_stations
+    attr_reader   :way_station
+
+    strong_attr_accessor :start_station, RailwaySimulator::Station
+    strong_attr_accessor :end_station,   RailwaySimulator::Station
+
+    validate :name, presence: true, type: String
 
     def initialize(name:, start_station:, end_station:)
       @start_station = start_station
@@ -35,27 +43,6 @@ module RailwaySimulator
 
     def all_stations
       [@start_station] + @way_stations + [@end_station]
-    end
-
-    def valid?
-      validate!
-      true
-    rescue ArgumentError
-      false
-    end
-
-    protected
-
-    def validate!
-      unless @start_station.is_a? Station
-        raise ArgumentError 'Start station have wrong type'
-      end
-
-      unless @end_station.is_a? Station
-        raise ArgumentError 'End station have wrong type'
-      end
-
-      raise ArgumentError 'Name must be filled' if @name.nil? || @name.empty?
     end
   end
 end

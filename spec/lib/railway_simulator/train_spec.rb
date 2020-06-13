@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
-
 RSpec.describe RailwaySimulator::Train do
   let(:stations) do
     (1..10).map { |i| RailwaySimulator::Station.new("Станция #{i}") }
@@ -28,21 +26,11 @@ RSpec.describe RailwaySimulator::Train do
     expect(subject.class).to eq(described_class)
   end
 
-  it 'should raise NumberEmpty if number is empty' do
-    expect { described_class.new('') }
-      .to raise_error(RailwaySimulator::Common::TrainErrors::NumberEmpty)
-  end
-
   it 'should iterating by carriages' do
     subject.add_carriage carriage
     carriages_names = subject.carriages(&:name)
 
     expect(carriages_names).to eq([carriage.name])
-  end
-
-  it 'should raise NumberWrongFormat if number is invalid' do
-    expect { described_class.new('A') }
-      .to raise_error(RailwaySimulator::Common::TrainErrors::NumberWrongFormat)
   end
 
   it 'should raise ArgumentError if route has wrong type' do
@@ -153,5 +141,3 @@ RSpec.describe RailwaySimulator::Train do
     end
   end
 end
-
-# rubocop:enable Metrics/BlockLength

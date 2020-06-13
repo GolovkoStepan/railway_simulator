@@ -35,8 +35,6 @@ module RailwaySimulator
       @speed     = 0
       @carriages = []
 
-      validate!
-
       self.class.send(:add_instance, self)
       send(:register_instance)
     end
@@ -101,13 +99,6 @@ module RailwaySimulator
       @current_station = @route.start_station
     end
 
-    def valid?
-      validate!
-      true
-    rescue StandardError
-      false
-    end
-
     private
 
     def move(to_station:)
@@ -129,13 +120,6 @@ module RailwaySimulator
       return if index.negative? || index >= @route.all_stations.count
 
       @route.all_stations[index]
-    end
-
-    protected
-
-    def validate!
-      raise NumberEmpty if @number.nil? || @number.empty?
-      raise NumberWrongFormat if @number !~ NUMBER_FORMAT
     end
   end
 end
