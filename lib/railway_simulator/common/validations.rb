@@ -36,7 +36,7 @@ module RailwaySimulator
           @validations ||= []
 
           attr_validations = options.each_with_object([]) do |(key, value), arr|
-            next unless VALIDATORS.key? key
+            next unless VALIDATORS.key?(key)
 
             arr << {
               attr: attr,
@@ -65,9 +65,7 @@ module RailwaySimulator
             params     = validation[:params]
 
             attr_value = instance_variable_get("@#{attr}")
-            unless exp.call(attr_value, params)
-              @errors << format(msg, attr: attr)
-            end
+            @errors << format(msg, attr: attr) unless exp.call(attr_value, params)
           end
 
           raise ValidationCustomError if @errors.count.positive?

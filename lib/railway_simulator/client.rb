@@ -6,9 +6,7 @@ require 'tty-prompt'
 module RailwaySimulator
   # Console client with interface
   class Client
-    attr_accessor :stations
-    attr_accessor :trains
-    attr_accessor :routes
+    attr_accessor :stations, :trains, :routes
 
     MAIN_MENU_CONFIGURATION = {
       'Создать новую станцию' => :create_station,
@@ -67,12 +65,13 @@ module RailwaySimulator
           break
         end
 
-        puts "Ошибка варидации. #{train.errors.inspect}"
+        puts("Ошибка варидации. #{train.errors.inspect}")
       end
     end
 
     def routes_processing
       @exit_flag = true
+
       while @exit_flag
         @prompt.select('Выберите действие') do |menu|
           menu.choice 'Создать новый маршрут',
@@ -182,7 +181,6 @@ module RailwaySimulator
       choices[0].merge!(disabled: hint) unless train.is_a? PassengerTrain
       choices[1].merge!(disabled: hint) unless train.is_a? FreightTrain
       carriage_type = @prompt.select('Выберите тип вагона', choices)
-
       return wait_and_clear wait_for: 0 if carriage_type.nil?
 
       carriage_name = @prompt.ask('Введите название вагона:')
@@ -225,9 +223,7 @@ module RailwaySimulator
     end
 
     def move_ahead(train:)
-      if train.next_station.nil?
-        return wait_and_clear msg: 'Поезд находится на конечной станции'
-      end
+      return wait_and_clear msg: 'Поезд находится на конечной станции' if train.next_station.nil?
 
       wait_and_clear msg: "Поезд движется к станции #{train.next_station.name}"
       train.speed_up
@@ -236,9 +232,7 @@ module RailwaySimulator
     end
 
     def move_back(train:)
-      if train.previous_station.nil?
-        return wait_and_clear msg: 'Поезд находится на начальной станции'
-      end
+      return wait_and_clear msg: 'Поезд находится на начальной станции' if train.previous_station.nil?
 
       wait_and_clear(
         msg: "Поезд движется к станции #{train.previous_station.name}"
@@ -285,17 +279,17 @@ module RailwaySimulator
     end
 
     def railway_state_info
-      puts '=== Станции и поезда'
+      puts('=== Станции и поезда')
       @stations.each do |station|
         formatted_str = [
           "Станция: [#{station.name}]".ljust(50),
           "Поезда: #{station.trains(&:number)&.join(', ')}"
-        ].join('')
+        ].join
 
-        puts formatted_str
+        puts(formatted_str)
       end
 
-      puts "\n=== Поезда"
+      puts("\n=== Поезда")
       @trains.each do |train|
         formatted_str = [
           "Поезд [#{train.number}]".ljust(25),
@@ -303,9 +297,9 @@ module RailwaySimulator
           "Маршрут: #{train.route&.name}".ljust(25),
           "Текущая станция: #{train.current_station&.name}".ljust(35),
           "Вагоны: #{train.carriages(&:name)&.join(', ')}"
-        ].join('')
+        ].join
 
-        puts formatted_str
+        puts(formatted_str)
       end
 
       @prompt.keypress "\nДля выхода нажмите любую клавишу..."
@@ -313,9 +307,9 @@ module RailwaySimulator
     end
 
     def wait_and_clear(wait_for: 1, msg: '')
-      puts msg
-      sleep wait_for
-      system 'clear'
+      puts(msg)
+      sleep(wait_for)
+      system('clear')
     end
 
     def complete_main_menu_loop

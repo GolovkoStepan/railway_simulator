@@ -10,6 +10,7 @@ module RailwaySimulator
     include Common::Validation
 
     attr_reader :name
+
     validate :name, presence: true, type: String
 
     def initialize(name)
@@ -22,21 +23,21 @@ module RailwaySimulator
     end
 
     def take_train(train)
-      raise ArgumentError unless train.is_a? Train
+      raise ArgumentError unless train.is_a?(Train)
 
       @trains << train
     end
 
-    def trains(for_type: Train)
-      raise ArgumentError unless for_type.is_a? Class
+    def trains(for_type: Train, &block)
+      raise ArgumentError unless for_type.is_a?(Class)
 
       trains_filter = lambda do
         return @trains if for_type == Train
 
-        @trains.select { |train| train.is_a? for_type }
+        @trains.select { |train| train.is_a?(for_type) }
       end
 
-      return trains_filter.call.map { |train| yield(train) } if block_given?
+      return trains_filter.call.map(&block) if block_given?
 
       trains_filter.call
     end

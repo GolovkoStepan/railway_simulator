@@ -32,7 +32,7 @@ module RailwaySimulator
     end
 
     def add_way_station(station)
-      raise ArgumentError unless station.is_a? Station
+      raise ArgumentError unless station.is_a?(Station)
 
       @way_stations << station
     end

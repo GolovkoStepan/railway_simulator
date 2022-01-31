@@ -10,6 +10,7 @@ module RailwaySimulator
     include Common::Validation
 
     attr_accessor :name
+
     validate :name, presence: true, type: String
 
     def initialize(name)

@@ -39,10 +39,10 @@ module RailwaySimulator
       send(:register_instance)
     end
 
-    def carriages
+    def carriages(&block)
       return @carriages unless block_given?
 
-      @carriages.map { |carriage| yield(carriage) }
+      @carriages.map(&block)
     end
 
     def speed_up
@@ -70,7 +70,7 @@ module RailwaySimulator
     end
 
     def route_present?
-      @current_station.is_a? Station
+      @current_station.is_a?(Station)
     end
 
     def carriages_present?
@@ -78,7 +78,7 @@ module RailwaySimulator
     end
 
     def add_carriage(carriage)
-      raise ArgumentError unless carriage.is_a? Carriage
+      raise ArgumentError unless carriage.is_a?(Carriage)
 
       @carriages << carriage if @speed.zero?
     end
@@ -92,7 +92,7 @@ module RailwaySimulator
     end
 
     def assign_route(route)
-      raise ArgumentError unless route.is_a? Route
+      raise ArgumentError unless route.is_a?(Route)
 
       @route = route
       @route.start_station.take_train(self)

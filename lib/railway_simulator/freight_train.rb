@@ -14,7 +14,7 @@ module RailwaySimulator
              type: String
 
     def add_carriage(carriage)
-      raise ArgumentError unless carriage.is_a? CargoCarriage
+      raise ArgumentError unless carriage.is_a?(CargoCarriage)
 
       super(carriage)
     end

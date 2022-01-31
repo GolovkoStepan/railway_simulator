@@ -10,6 +10,7 @@ module RailwaySimulator
     def initialize(name:, volume: 1000)
       @total_volume    = volume.to_f
       @occupied_volume = 0
+
       super(name)
     end
 

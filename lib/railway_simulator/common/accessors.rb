@@ -24,9 +24,7 @@ module RailwaySimulator
         define_method attr, -> { instance_variable_get("@#{attr}") }
 
         define_method "#{attr}=" do |value|
-          unless value.is_a? klass
-            raise TypeError, "Invalid type. Must be a #{klass}"
-          end
+          raise TypeError, "Invalid type. Must be a #{klass}" unless value.is_a?(klass)
 
           instance_variable_set("@#{attr}", value)
         end
